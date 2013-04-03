@@ -5,6 +5,7 @@ awful.rules = require("awful.rules")
 require("awful.autofocus")
 -- Widget and layout library
 local wibox = require("wibox")
+vicious = require("vicious")
 -- Theme handling library
 local beautiful = require("beautiful")
 -- Notification library
@@ -109,6 +110,15 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 -- }}}
 
 -- {{{ Wibox
+-- Create a battery monitor
+mybatterymonitor = wibox.widget.textbox()
+vicious.register(mybatterymonitor, vicious.widgets.bat,
+    function (widget, args)
+        if args[2] <= 10 then
+            return string.format('<span color="red">%% %i %s |</span>', args[2], args[1])
+        else return string.format('<span color="green">%% %i %s |</span>', args[2], args[1])
+        end
+    end, 61, "BAT0")
 -- Create a textclock widget
 mytextclock = awful.widget.textclock()
 
@@ -169,6 +179,7 @@ for s = 1, screen.count() do
     mylayoutbox[s]:buttons(awful.util.table.join(
                            awful.button({ }, 1, function () awful.layout.inc(layouts, 1) end),
                            awful.button({ }, 3, function () awful.layout.inc(layouts, -1) end),
+                           awful.button({ }, 3, function () awful.layout.inc(layouts, -1) end),
                            awful.button({ }, 4, function () awful.layout.inc(layouts, 1) end),
                            awful.button({ }, 5, function () awful.layout.inc(layouts, -1) end)))
     -- Create a taglist widget
@@ -189,8 +200,10 @@ for s = 1, screen.count() do
     -- Widgets that are aligned to the right
     local right_layout = wibox.layout.fixed.horizontal()
     if s == 1 then right_layout:add(wibox.widget.systray()) end
+    right_layout:add(mybatterymonitor)
     right_layout:add(mytextclock)
     right_layout:add(mylayoutbox[s])
+   
 
     -- Now bring it all together (with the tasklist in the middle)
     local layout = wibox.layout.align.horizontal()
@@ -434,4 +447,3 @@ end)
 
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
--- }}}
