@@ -9,7 +9,7 @@ vicious = require("vicious")
 -- Theme handling library
 local beautiful = require("beautiful")
 -- Notification library
-local naughty = require("naughty")
+naughty = require("naughty")
 local menubar = require("menubar")
 
 -- {{{ Error handling
