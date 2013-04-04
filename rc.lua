@@ -115,18 +115,18 @@ mybatterymonitor = wibox.widget.textbox()
 vicious.register(mybatterymonitor, vicious.widgets.bat,
     function (widget, args)
         if args[2] <= 10 then
-            return string.format('<span color="red">%% %i %s |</span>', args[2], args[1])
-        else return string.format('<span color="green">%% %i %s |</span>', args[2], args[1])
+            return string.format('<span color="red"> %% %i %s </span>|', args[2], args[1])
+        else return string.format('<span color="green"> %% %i %s </span>|', args[2], args[1])
         end
     end, 61, "BAT0")
 -- Create a wifi monitor
 mywifimonitor = wibox.widget.textbox()
 vicious.register(mywifimonitor, vicious.widgets.wifi,
     function (widget, args)
-        if args["{rate}"] == 0 then return ""
+        if args["{rate}"] == 0 then return " | "
         elseif args["{rate}"] < 20 then
-             return string.format('<span color="orange"> %s at %i Mb/s, %i\' of quality | </span>', args["{ssid}"], args["{rate}"], args["{link}"])
-        else return string.format('<span color="green"> %s at %i Mb/s, %i\' of quality | </span>', args["{ssid}"], args["{rate}"], args["{link}"])
+             return string.format('<span color="orange"> %s at %i Mb/s, %i\' of quality </span>| ', args["{ssid}"], args["{rate}"], args["{link}"])
+        else return string.format('<span color="green"> %s at %i Mb/s, %i\' of quality </span>| ', args["{ssid}"], args["{rate}"], args["{link}"])
         end
     end, 31, "wlp3s0")
 -- Create a textclock widget
