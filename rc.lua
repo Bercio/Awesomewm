@@ -56,13 +56,13 @@ modkey = "Mod4"
 -- Table of layouts to cover with awful.layout.inc, order matters.
 local layouts =
 {
-    awful.layout.suit.floating,
     awful.layout.suit.tile,
-    awful.layout.suit.tile.left,
     awful.layout.suit.tile.bottom,
+    awful.layout.suit.fair.horizontal,
+    awful.layout.suit.tile.left,
     awful.layout.suit.tile.top,
     awful.layout.suit.fair,
-    awful.layout.suit.fair.horizontal,
+    awful.layout.suit.floating,
     awful.layout.suit.spiral,
     awful.layout.suit.spiral.dwindle,
     awful.layout.suit.max,
@@ -123,7 +123,7 @@ vicious.register(mybatterymonitor, vicious.widgets.bat,
 mywifimonitor = wibox.widget.textbox()
 vicious.register(mywifimonitor, vicious.widgets.wifi,
     function (widget, args)
-        if args["{rate]"] == 0 then return ""
+        if args["{rate}"] == 0 then return ""
         elseif args["{rate}"] < 20 then
              return string.format('<span color="orange"> %s at %i Mb/s, %i\' of quality | </span>', args["{ssid}"], args["{rate}"], args["{link}"])
         else return string.format('<span color="green"> %s at %i Mb/s, %i\' of quality | </span>', args["{ssid}"], args["{rate}"], args["{link}"])
