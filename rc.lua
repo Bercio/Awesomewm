@@ -111,20 +111,21 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 -- }}}
 
 -- {{{ Wibox
+-- Personalized
 -- Create a battery monitor
 mybatterymonitor = wibox.widget.textbox()
 vicious.register(mybatterymonitor, vicious.widgets.bat,
     function (widget, args)
         if args[2] <= 10 then
-            return string.format('<span color="red"> %% %i %s </span>|', args[2], args[1])
-        else return string.format('<span color="green"> %% %i %s </span>|', args[2], args[1])
+            return string.format('<span color="red">%% %s%i </span>|', args[1], args[2])
+        else return string.format('<span color="green">%% %s%i </span>|', args[1], args[2])
         end
     end, 61, "BAT0")
 -- Create a wifi monitor
 mywifimonitor = wibox.widget.textbox()
 vicious.register(mywifimonitor, vicious.widgets.wifi,
     function (widget, args)
-        if args["{rate}"] == 0 then return " | "
+        if args["{rate}"] == 0 then return " "
         elseif args["{rate}"] < 20 then
              return string.format('<span color="orange"> %s at %i Mb/s, %i/70 </span>| ', args["{ssid}"], args["{rate}"], args["{link}"])
         else return string.format('<span color="green"> %s at %i Mb/s, %i/70 </span>| ', args["{ssid}"], args["{rate}"], args["{link}"])
@@ -132,9 +133,10 @@ vicious.register(mywifimonitor, vicious.widgets.wifi,
     end, 17, "wlp3s0")
 -- Create a google calendar monitor
 mygcalmonitor = wibox.widget.textbox()
-bashets.register("GcalNotifier.sh", {widget = mygcalmonitor, separator="\n", format="$1<span color='blue'>$2</span> |", update_time=1200, async=true})
+bashets.register("GcalNotifier.sh", {widget = mygcalmonitor, separator="\n", format="$1<span color='blue'> $2</span> |", update_time=360, async=true})
 --IMPORTANT ! without, bashets don't work
 bashets.start()
+-- End Personalized
 -- Create a textclock widget
 mytextclock = awful.widget.textclock()
 
