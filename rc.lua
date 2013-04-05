@@ -240,6 +240,12 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "Right",  awful.tag.viewnext       ),
     awful.key({ modkey,           }, "Escape", awful.tag.history.restore),
     --Personalized
+    awful.key({}, "#121",
+    function () awful.util.spawn_with_shell("amixer sset Master toggle") end),
+    awful.key({}, "#122",
+    function () awful.util.spawn_with_shell("amixer sset Master playback 1-") end),
+    awful.key({}, "#123",
+    function () awful.util.spawn_with_shell("amixer sset Master playback 1+") end),
     awful.key({ modkey,		  }, "b",
 	function ()
 	    mywibox[mouse.screen].visible = not mywibox[mouse.screen].visible
