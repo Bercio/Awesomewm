@@ -239,10 +239,15 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "Left",   awful.tag.viewprev       ),
     awful.key({ modkey,           }, "Right",  awful.tag.viewnext       ),
     awful.key({ modkey,           }, "Escape", awful.tag.history.restore),
+    --Personalized
     awful.key({ modkey,		  }, "b",
 	function ()
 	    mywibox[mouse.screen].visible = not mywibox[mouse.screen].visible
 	end),
+    
+    awful.key({ modkey,           }, "#83", function () awful.util.spawn("chromium") end),
+
+    --End Personalized
 
     awful.key({ modkey,           }, "j",
         function ()
