@@ -56,13 +56,13 @@ modkey = "Mod4"
 -- Table of layouts to cover with awful.layout.inc, order matters.
 local layouts =
 {
-    awful.layout.suit.floating,
     awful.layout.suit.tile,
-    awful.layout.suit.tile.left,
     awful.layout.suit.tile.bottom,
+    awful.layout.suit.fair.horizontal,
+    awful.layout.suit.tile.left,
     awful.layout.suit.tile.top,
     awful.layout.suit.fair,
-    awful.layout.suit.fair.horizontal,
+    awful.layout.suit.floating,
     awful.layout.suit.spiral,
     awful.layout.suit.spiral.dwindle,
     awful.layout.suit.max,
@@ -84,7 +84,7 @@ end
 tags = {}
 for s = 1, screen.count() do
     -- Each screen has its own tag table.
-    tags[s] = awful.tag({ 1, 2, 3, 4, 5, 6, 7, 8, 9 }, s, layouts[1])
+    tags[s] = awful.tag({ "work", "docs", "talk", "wait", "misc" }, s, layouts[1])
 end
 -- }}}
 
@@ -115,18 +115,18 @@ mybatterymonitor = wibox.widget.textbox()
 vicious.register(mybatterymonitor, vicious.widgets.bat,
     function (widget, args)
         if args[2] <= 10 then
-            return string.format('<span color="red">%% %i %s |</span>', args[2], args[1])
-        else return string.format('<span color="green">%% %i %s |</span>', args[2], args[1])
+            return string.format('<span color="red"> %% %i %s </span>|', args[2], args[1])
+        else return string.format('<span color="green"> %% %i %s </span>|', args[2], args[1])
         end
     end, 61, "BAT0")
 -- Create a wifi monitor
 mywifimonitor = wibox.widget.textbox()
 vicious.register(mywifimonitor, vicious.widgets.wifi,
     function (widget, args)
-        if args["{rate]"] == 0 then return ""
+        if args["{rate}"] == 0 then return " | "
         elseif args["{rate}"] < 20 then
-             return string.format('<span color="orange"> %s at %i Mb/s, %i\' of quality | </span>', args["{ssid}"], args["{rate}"], args["{link}"])
-        else return string.format('<span color="green"> %s at %i Mb/s, %i\' of quality | </span>', args["{ssid}"], args["{rate}"], args["{link}"])
+             return string.format('<span color="orange"> %s at %i Mb/s, %i\' of quality </span>| ', args["{ssid}"], args["{rate}"], args["{link}"])
+        else return string.format('<span color="green"> %s at %i Mb/s, %i\' of quality </span>| ', args["{ssid}"], args["{rate}"], args["{link}"])
         end
     end, 31, "wlp3s0")
 -- Create a textclock widget
@@ -328,7 +328,7 @@ clientkeys = awful.util.table.join(
 -- Bind all key numbers to tags.
 -- Be careful: we use keycodes to make it works on any keyboard layout.
 -- This should map on the top row of your keyboard, usually 1 to 9.
-for i = 1, 9 do
+for i = 1, 5 do
     globalkeys = awful.util.table.join(globalkeys,
         awful.key({ modkey }, "#" .. i + 9,
                   function ()
