@@ -117,8 +117,8 @@ mybatterymonitor = wibox.widget.textbox()
 vicious.register(mybatterymonitor, vicious.widgets.bat,
     function (widget, args)
         if args[2] <= 10 then
-            return string.format('<span color="red">%% %s%i </span>|', args[1], args[2])
-        else return string.format('<span color="green">%% %s%i </span>|', args[1], args[2])
+            return string.format('<span color="red">%% %s%i</span> |', args[1], args[2])
+        else return string.format('<span color="green">%% %s%i</span> |', args[1], args[2])
         end
     end, 61, "BAT0")
 -- Create a wifi monitor
@@ -127,20 +127,20 @@ vicious.register(mywifimonitor, vicious.widgets.wifi,
     function (widget, args)
         if args["{rate}"] == 0 then return " "
         elseif args["{rate}"] < 20 then
-             return string.format('<span color="orange"> %s at %i Mb/s, %i/70 </span>| ', args["{ssid}"], args["{rate}"], args["{link}"])
-        else return string.format('<span color="green"> %s at %i Mb/s, %i/70 </span>| ', args["{ssid}"], args["{rate}"], args["{link}"])
+             return string.format(' <span color="orange"> %s at %i Mb/s, %i/70</span> |', args["{ssid}"], args["{rate}"], args["{link}"])
+        else return string.format(' <span color="green"> %s at %i Mb/s, %i/70</span> |', args["{ssid}"], args["{rate}"], args["{link}"])
         end
     end, 17, "wlp3s0")
 -- Create a google calendar monitor
 mygcalmonitor = wibox.widget.textbox()
-bashets.register("GcalNotifier.sh", {widget = mygcalmonitor, separator="\n", format="$1<span color='blue'> $2</span> |", update_time=360, async=true})
+bashets.register("gcal.sh", {widget = mygcalmonitor, separator="\n", format=" $1<span color='blue'>$2</span> |", update_time=3, async=true})
 -- Create a volume monitor
 myvolumemonitor = wibox.widget.textbox()
 vicious.register(myvolumemonitor, vicious.widgets.volume,
     function (widget, args)
         if args[1] == 0 then
-            return string.format('<span color="red">%%%i %s</span>|', args[1], args[2])
-        else return string.format('<span color="green">%%%i %s</span>|', args[1], args[2])
+            return string.format(' <span color="red">%%%i %s</span> |', args[1], args[2])
+        else return string.format(' <span color="green">%%%i %s</span> |', args[1], args[2])
         end
     end, 1, "Master")
 
