@@ -134,6 +134,16 @@ vicious.register(mywifimonitor, vicious.widgets.wifi,
 -- Create a google calendar monitor
 mygcalmonitor = wibox.widget.textbox()
 bashets.register("GcalNotifier.sh", {widget = mygcalmonitor, separator="\n", format="$1<span color='blue'> $2</span> |", update_time=360, async=true})
+-- Create a volume monitor
+myvolumemonitor = wibox.widget.textbox()
+vicious.register(myvolumemonitor, vicious.widgets.volume,
+    function (widget, args)
+        if args[1] == 0 then
+            return string.format('<span color="red">%%%i %s</span>|', args[1], args[2])
+        else return string.format('<span color="green">%%%i %s</span>|', args[1], args[2])
+        end
+    end, 1, "Master")
+
 --IMPORTANT ! without, bashets don't work
 bashets.start()
 -- End Personalized
@@ -218,6 +228,7 @@ for s = 1, screen.count() do
     -- Widgets that are aligned to the right
     local right_layout = wibox.layout.fixed.horizontal()
     if s == 1 then right_layout:add(wibox.widget.systray()) end
+    right_layout:add(myvolumemonitor)
     right_layout:add(mygcalmonitor)
     right_layout:add(mywifimonitor)
     right_layout:add(mybatterymonitor)
