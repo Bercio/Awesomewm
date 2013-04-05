@@ -240,6 +240,8 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "Right",  awful.tag.viewnext       ),
     awful.key({ modkey,           }, "Escape", awful.tag.history.restore),
     --Personalized
+    awful.key({}, "#199",
+    function () awful.util.spawn_with_shell("toggleTouchpad.sh") end),
     awful.key({}, "#121",
     function () awful.util.spawn_with_shell("amixer sset Master toggle") end),
     awful.key({}, "#122",
