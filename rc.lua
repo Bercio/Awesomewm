@@ -138,12 +138,13 @@ bashets.register("gcal.sh", {widget = mygcalmonitor, separator="\n", format=" $1
 myvolumemonitor = wibox.widget.textbox()
 vicious.register(myvolumemonitor, vicious.widgets.volume,
     function (widget, args)
-        if args[1] == 0 then
-            return string.format(' <span color="red">%%%i %s</span> |', args[1], args[2])
-        else return string.format(' <span color="green">%%%i %s</span> |', args[1], args[2])
+        if args[1] == 0 or args[2] == "M" then
+            return string.format(' <span color="red">%%%i</span> |', args[1])
+        else return string.format(' <span color="green">%%%i</span> |', args[1])
         end
     end, 1, "Master")
 
+mylastwidgetmonitor = wibox.widget.textbox("|")
 --IMPORTANT ! without, bashets don't work
 bashets.start()
 -- End Personalized
@@ -228,6 +229,7 @@ for s = 1, screen.count() do
     -- Widgets that are aligned to the right
     local right_layout = wibox.layout.fixed.horizontal()
     if s == 1 then right_layout:add(wibox.widget.systray()) end
+    right_layout:add(mylastwidgetmonitor)
     right_layout:add(myvolumemonitor)
     right_layout:add(mygcalmonitor)
     right_layout:add(mywifimonitor)
