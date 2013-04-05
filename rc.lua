@@ -140,7 +140,7 @@ vicious.register(myvolumemonitor, vicious.widgets.volume,
     function (widget, args)
         if args[1] == 0 or args[2] == "M" then
             return string.format(' <span color="red">%%%i</span> |', args[1])
-        else return string.format(' <span color="green">%%%i</span> |', args[1])
+        else return string.format(' <span color="purple">%%%i</span> |', args[1])
         end
     end, 1, "Master")
 
