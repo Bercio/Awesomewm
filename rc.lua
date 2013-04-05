@@ -6,6 +6,7 @@ require("awful.autofocus")
 -- Widget and layout library
 local wibox = require("wibox")
 vicious = require("vicious")
+bashets = require("bashets")
 -- Theme handling library
 local beautiful = require("beautiful")
 -- Notification library
@@ -125,10 +126,15 @@ vicious.register(mywifimonitor, vicious.widgets.wifi,
     function (widget, args)
         if args["{rate}"] == 0 then return " | "
         elseif args["{rate}"] < 20 then
-             return string.format('<span color="orange"> %s at %i Mb/s, %i\' of quality </span>| ', args["{ssid}"], args["{rate}"], args["{link}"])
-        else return string.format('<span color="green"> %s at %i Mb/s, %i\' of quality </span>| ', args["{ssid}"], args["{rate}"], args["{link}"])
+             return string.format('<span color="orange"> %s at %i Mb/s, %i/70 </span>| ', args["{ssid}"], args["{rate}"], args["{link}"])
+        else return string.format('<span color="green"> %s at %i Mb/s, %i/70 </span>| ', args["{ssid}"], args["{rate}"], args["{link}"])
         end
-    end, 31, "wlp3s0")
+    end, 17, "wlp3s0")
+-- Create a google calendar monitor
+mygcalmonitor = wibox.widget.textbox()
+bashets.register("GcalNotifier.sh", {widget = mygcalmonitor, separator="\n", format="$1 | <span color='blue'>$2</span> |", update_time=1200, async=true})
+--IMPORTANT ! without, bashets don't work
+bashets.start()
 -- Create a textclock widget
 mytextclock = awful.widget.textclock()
 
@@ -210,6 +216,7 @@ for s = 1, screen.count() do
     -- Widgets that are aligned to the right
     local right_layout = wibox.layout.fixed.horizontal()
     if s == 1 then right_layout:add(wibox.widget.systray()) end
+    right_layout:add(mygcalmonitor)
     right_layout:add(mywifimonitor)
     right_layout:add(mybatterymonitor)
     right_layout:add(mytextclock)
