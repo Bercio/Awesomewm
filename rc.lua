@@ -43,7 +43,7 @@ end
 beautiful.init("/home/bercio/.config/awesome/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
-terminal = "urxvt"
+terminal = "st"
 editor = os.getenv("EDITOR") or "nano"
 editor_cmd = terminal .. " -e " .. editor
 
@@ -218,7 +218,7 @@ for s = 1, screen.count() do
     right_layout:add(mybatterymonitor)
     right_layout:add(mytextclock)
     right_layout:add(mylayoutbox[s])
-   
+
 
     -- Now bring it all together (with the tasklist in the middle)
     local layout = wibox.layout.align.horizontal()
@@ -247,7 +247,7 @@ globalkeys = awful.util.table.join(
 	function ()
 	    mywibox[mouse.screen].visible = not mywibox[mouse.screen].visible
 	end),
-    
+
     awful.key({ modkey,           }, "#83", function () awful.util.spawn("chromium") end),
 
     --End Personalized
@@ -308,7 +308,7 @@ globalkeys = awful.util.table.join(
 
 clientkeys = awful.util.table.join(
     awful.key({ modkey,           }, "f",      function (c) c.fullscreen = not c.fullscreen  end),
-    awful.key({ modkey, "Shift"   }, "c",      function (c) c:kill()                         end),
+    awful.key({ modkey, "Shift"   }, "d",      function (c) c:kill()                         end),
     awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle                     ),
     awful.key({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end),
     awful.key({ modkey,           }, "o",      awful.client.movetoscreen                        ),
@@ -388,8 +388,14 @@ awful.rules.rules = {
     { rule = { class = "gimp" },
       properties = { floating = true } },
     -- Set Firefox to always map on tags number 2 of screen 1.
-    -- { rule = { class = "Firefox" },
-    --   properties = { tag = tags[1][2] } },
+    { rule = { class = "Chromium" },
+      properties = { tag = tags[1][2] } },
+    { rule = { class = "Transmission" },
+      properties = { tag = tags[1][4] } },
+    { rule = { class = "wicd" },
+      properties = { tag = tags[1][4] } },
+    { rule = { class = "Skype" },
+      properties = { tag = tags[1][3] } },
 }
 -- }}}
 
