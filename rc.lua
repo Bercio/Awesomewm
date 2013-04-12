@@ -116,7 +116,7 @@ vicious.register(mywifimonitor, vicious.widgets.wifi,
     end, 17, "wlp3s0")
 -- Create a google calendar monitor
 mygcalmonitor = wibox.widget.textbox()
-bashets.register("gcal.sh", {widget = mygcalmonitor, separator="\n", format=" $1<span color='blue'>$2</span> |", update_time=3, async=true})
+bashets.register("wrapgcal.sh", {widget = mygcalmonitor, separator="\n", format=" $1 |", update_time=100})
 -- Create a volume monitor
 myvolumemonitor = wibox.widget.textbox()
 vicious.register(myvolumemonitor, vicious.widgets.volume,
