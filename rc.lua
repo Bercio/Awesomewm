@@ -12,6 +12,9 @@ local beautiful = require("beautiful")
 -- Notification library
 naughty = require("naughty")
 local menubar = require("menubar")
+battery = require("battery")
+cal = require("cal")
+-- require("eminent")
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -95,7 +98,16 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 
 -- {{{ Wibox
 -- Personalized
--- Create a battery monitor
+--- Battery notifier
+
+batterywidget = wibox.widget.textbox()
+
+bat_clo = battery.batclosure("BAT0")
+batterywidget.text = bat_clo()
+battimer = timer({ timeout = 131 })
+battimer:connect_signal("timeout", function() batterywidget.text = bat_clo() end)
+battimer:start()
+--Create a battery monitor
 mybatterymonitor = wibox.widget.textbox()
 vicious.register(mybatterymonitor, vicious.widgets.bat,
     function (widget, args)
@@ -103,8 +115,8 @@ vicious.register(mybatterymonitor, vicious.widgets.bat,
             return string.format('<span color="red">%% %s%i</span> |', args[1], args[2])
         else return string.format('<span color="green">%% %s%i</span> |', args[1], args[2])
         end
-    end, 61, "BAT0")
--- Create a wifi monitor
+    end, 31, "BAT0")
+--Create a wifi monitor
 mywifimonitor = wibox.widget.textbox()
 vicious.register(mywifimonitor, vicious.widgets.wifi,
     function (widget, args)
@@ -114,9 +126,6 @@ vicious.register(mywifimonitor, vicious.widgets.wifi,
         else return string.format(' <span color="green"> %s at %i Mb/s, %i/70</span> |', args["{ssid}"], args["{rate}"], args["{link}"])
         end
     end, 17, "wlp3s0")
--- Create a google calendar monitor
-mygcalmonitor = wibox.widget.textbox()
-bashets.register("wrapgcal.sh", {widget = mygcalmonitor, separator="\n", format=" $1 |", update_time=100})
 -- Create a volume monitor
 myvolumemonitor = wibox.widget.textbox()
 vicious.register(myvolumemonitor, vicious.widgets.volume,
@@ -128,11 +137,13 @@ vicious.register(myvolumemonitor, vicious.widgets.volume,
     end, 1, "Master")
 
 mylastwidgetmonitor = wibox.widget.textbox("|")
+-- Create a textclock widget
+mytextclock = wibox.widget.textbox()
+vicious.register(mytextclock, vicious.widgets.date, "%T", 1)
+cal.register(mytextclock, "<b><span color='red'>%s</span></b>")
 --IMPORTANT ! without, bashets don't work
 bashets.start()
 -- End Personalized
--- Create a textclock widget
-mytextclock = awful.widget.textclock()
 
 -- Create a wibox for each screen and add it
 mywibox = {}
@@ -213,7 +224,6 @@ for s = 1, screen.count() do
     if s == 1 then right_layout:add(wibox.widget.systray()) end
     right_layout:add(mylastwidgetmonitor)
     right_layout:add(myvolumemonitor)
-    right_layout:add(mygcalmonitor)
     right_layout:add(mywifimonitor)
     right_layout:add(mybatterymonitor)
     right_layout:add(mytextclock)
