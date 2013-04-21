@@ -103,9 +103,9 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 batterywidget = wibox.widget.textbox()
 
 bat_clo = battery.batclosure("BAT0")
-batterywidget.text = bat_clo()
+batterywidget.text = " " .. bat_clo() .. " "
 battimer = timer({ timeout = 131 })
-battimer:connect_signal("timeout", function() batterywidget.text = bat_clo() end)
+battimer:connect_signal("timeout", function() batterywidget.text = " " .. bat_clo() .. " " end)
 battimer:start()
 --Create a battery monitor
 mybatterymonitor = wibox.widget.textbox()
@@ -135,6 +135,30 @@ vicious.register(myvolumemonitor, vicious.widgets.volume,
         else return string.format(' <span color="purple">%%%i</span> |', args[1])
         end
     end, 1, "Master")
+myreminder = wibox.widget.textbox()
+function next_reminder()
+     local fd=io.popen("bash /home/bercio/Scripts/remind.sh", "r") --next reminder
+     local line=fd:read()
+     return line
+end
+myreminder.text = " " .. next_reminder() .. " "
+myreminder_timer=timer({timeout=115})
+myreminder_timer:connect_signal("timeout", function()
+    myreminder.text = " " .. next_reminder() .. " "
+end)
+myreminder_timer:start()
+-- mynowremind = wibox.widget.textbox()
+-- function now_reminder()
+--     local fd=io.popen("/home/bercio/.cache/remind/", "r")
+--     local line=fd:read()
+--     return line
+-- end
+-- mynowremind.text = " " .. now_reminder() .. " "
+-- mynowremind_timer=timer({timeout=135})
+-- mynowremind_timer:connect_signal("timeout", function()
+--     mynowremind.text = " " .. now_reminder() .. " "
+-- end)
+-- mynowremind_timer:start()
 
 mylastwidgetmonitor = wibox.widget.textbox("|")
 -- Create a textclock widget
@@ -222,6 +246,8 @@ for s = 1, screen.count() do
     -- Widgets that are aligned to the right
     local right_layout = wibox.layout.fixed.horizontal()
     if s == 1 then right_layout:add(wibox.widget.systray()) end
+    -- right_layout:add(mynowremind)
+    right_layout:add(myreminder)
     right_layout:add(mylastwidgetmonitor)
     right_layout:add(myvolumemonitor)
     right_layout:add(mywifimonitor)
@@ -258,7 +284,13 @@ globalkeys = awful.util.table.join(
 	    mywibox[mouse.screen].visible = not mywibox[mouse.screen].visible
 	end),
 
+    awful.key({ modkey,           }, "#79", function () awful.util.spawn("st -t Transmission -c Transmission -e transmission-remote -l") end),
+    awful.key({ modkey,           }, "#80", function () awful.util.spawn("st -t mutt -c mutt -e mutt") end),
+    awful.key({ modkey,           }, "#81", function () awful.util.spawn("st -t vim -c vim -e vim") end),
     awful.key({ modkey,           }, "#83", function () awful.util.spawn("chromium") end),
+    awful.key({ modkey,           }, "#84", function () awful.util.spawn("mpc toggle") end),
+    awful.key({ modkey,           }, "#85", function () awful.util.spawn("st -t wicd -c wicd -e wicd-curses") end),
+
 
     --End Personalized
 
@@ -390,18 +422,26 @@ awful.rules.rules = {
                      border_color = beautiful.border_normal,
                      focus = awful.client.focus.filter,
                      keys = clientkeys,
-                     buttons = clientbuttons } },
+                     buttons = clientbuttons },
+      callback = awful.client.setslave
+    },
     { rule = { class = "MPlayer" },
       properties = { floating = true } },
     { rule = { class = "pinentry" },
       properties = { floating = true } },
     { rule = { class = "gimp" },
       properties = { floating = true } },
+    { rule = { class = "feh" },
+      properties = { floating = true } },
     -- Set Firefox to always map on tags number 2 of screen 1.
     { rule = { class = "Chromium" },
       properties = { tag = tags[1][2] } },
+    { rule = { class = "vim" },
+      properties = { tag = tags[1][1] } },
     { rule = { class = "Transmission" },
       properties = { tag = tags[1][4] } },
+    { rule = { class = "mutt" },
+      properties = { tag = tags[1][3] } },
     { rule = { class = "wicd" },
       properties = { tag = tags[1][4] } },
     { rule = { class = "Skype" },
