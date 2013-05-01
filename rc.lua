@@ -43,10 +43,10 @@ end
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, and wallpapers
-beautiful.init("/home/bercio/.config/awesome/theme.lua")
+beautiful.init("/usr/share/awesome/themes/sky/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
-terminal = "st"
+terminal = "urxvtc"
 editor = os.getenv("EDITOR") or "nano"
 editor_cmd = terminal .. " -e " .. editor
 
@@ -98,73 +98,52 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 
 -- {{{ Wibox
 -- Personalized
---- Battery notifier
+-- --- Battery notifier
 
-batterywidget = wibox.widget.textbox()
+-- batterywidget = wibox.widget.textbox(
 
-bat_clo = battery.batclosure("BAT0")
-batterywidget.text = " " .. bat_clo() .. " "
-battimer = timer({ timeout = 131 })
-battimer:connect_signal("timeout", function() batterywidget.text = " " .. bat_clo() .. " " end)
-battimer:start()
+-- bat_clo = battery.batclosure("BAT0")
+-- batterywidget.text = " " .. bat_clo() .. " "
+-- battimer = timer({ timeout = 131 })
+-- battimer:connect_signal("timeout", function() batterywidget.text = " " .. bat_clo() .. " " end)
+-- battimer:start()
 --Create a battery monitor
 mybatterymonitor = wibox.widget.textbox()
 vicious.register(mybatterymonitor, vicious.widgets.bat,
     function (widget, args)
-        if args[2] <= 10 then
-            return string.format('<span color="red">%% %s%i</span> |', args[1], args[2])
-        else return string.format('<span color="green">%% %s%i</span> |', args[1], args[2])
+        if args[1] == "⌁" then
+            return string.format('<span color="#6a9fb5"> ⚡ </span>')
+        elseif args[2] <= 10 then
+            return string.format('<span color="#6a9fb5"> ⚡ </span><span color="#AC4142">%s%i</span> ', args[1], args[2])
+        else return string.format('<span color="#6a9fb5"> ⚡ </span><span color="#90A959">%s%i</span> ', args[1], args[2])
         end
     end, 31, "BAT0")
 --Create a wifi monitor
 mywifimonitor = wibox.widget.textbox()
 vicious.register(mywifimonitor, vicious.widgets.wifi,
     function (widget, args)
-        if args["{rate}"] == 0 then return " "
+        if args["{rate}"] == 0 then return "<span color='#AC4142'>W</span>"
         elseif args["{rate}"] < 20 then
-             return string.format(' <span color="orange"> %s at %i Mb/s, %i/70</span> |', args["{ssid}"], args["{rate}"], args["{link}"])
-        else return string.format(' <span color="green"> %s at %i Mb/s, %i/70</span> |', args["{ssid}"], args["{rate}"], args["{link}"])
+             return string.format(' <span color="#D28445">%i Mb/s</span> ', args["{rate}"])
+        else return string.format(' <span color="#90A959">%i Mb/s</span> ', args["{rate}"])
         end
-    end, 17, "wlp3s0")
+    end, 7, "wlp3s0")
 -- Create a volume monitor
 myvolumemonitor = wibox.widget.textbox()
 vicious.register(myvolumemonitor, vicious.widgets.volume,
     function (widget, args)
         if args[1] == 0 or args[2] == "M" then
-            return string.format(' <span color="red">%%%i</span> |', args[1])
-        else return string.format(' <span color="purple">%%%i</span> |', args[1])
+            return string.format(' <span color="#6a9fb5">♪ </span><span color="#AC4142">%i</span> ', args[1])
+        else return string.format(' <span color="#6a9fb5">♪ </span><span color="#AA759F">%i</span> ', args[1])
         end
     end, 1, "Master")
 myreminder = wibox.widget.textbox()
-function next_reminder()
-     local fd=io.popen("bash /home/bercio/Scripts/remind.sh", "r") --next reminder
-     local line=fd:read()
-     return line
-end
-myreminder.text = " " .. next_reminder() .. " "
-myreminder_timer=timer({timeout=115})
-myreminder_timer:connect_signal("timeout", function()
-    myreminder.text = " " .. next_reminder() .. " "
-end)
-myreminder_timer:start()
--- mynowremind = wibox.widget.textbox()
--- function now_reminder()
---     local fd=io.popen("/home/bercio/.cache/remind/", "r")
---     local line=fd:read()
---     return line
--- end
--- mynowremind.text = " " .. now_reminder() .. " "
--- mynowremind_timer=timer({timeout=135})
--- mynowremind_timer:connect_signal("timeout", function()
---     mynowremind.text = " " .. now_reminder() .. " "
--- end)
--- mynowremind_timer:start()
-
-mylastwidgetmonitor = wibox.widget.textbox("|")
+bashets.register("remind.sh",{widget = myreminder, separator = "\n", format = "$1 <span color='#F5F5F5'>|</span> <span color='#F4BF75'>$2</span>", update_time = 367})
+mylastwidgetmonitor = wibox.widget.textbox("<span color='#F5F5F5'>|</span>")
 -- Create a textclock widget
 mytextclock = wibox.widget.textbox()
 vicious.register(mytextclock, vicious.widgets.date, "%T", 1)
-cal.register(mytextclock, "<b><span color='red'>%s</span></b>")
+cal.register(mytextclock, "<b><span color='#AC4142'>%s</span></b>")
 --IMPORTANT ! without, bashets don't work
 bashets.start()
 -- End Personalized
@@ -246,20 +225,24 @@ for s = 1, screen.count() do
     -- Widgets that are aligned to the right
     local right_layout = wibox.layout.fixed.horizontal()
     if s == 1 then right_layout:add(wibox.widget.systray()) end
-    -- right_layout:add(mynowremind)
-    right_layout:add(myreminder)
     right_layout:add(mylastwidgetmonitor)
     right_layout:add(myvolumemonitor)
+    right_layout:add(mylastwidgetmonitor)
     right_layout:add(mywifimonitor)
+    right_layout:add(mylastwidgetmonitor)
     right_layout:add(mybatterymonitor)
-    right_layout:add(mytextclock)
     right_layout:add(mylayoutbox[s])
+
+    local middle_layout = wibox.layout.fixed.horizontal()
+    middle_layout:add(myreminder)
+    middle_layout:add(mylastwidgetmonitor)
+    middle_layout:add(mytextclock)
 
 
     -- Now bring it all together (with the tasklist in the middle)
     local layout = wibox.layout.align.horizontal()
     layout:set_left(left_layout)
-    layout:set_middle(mytasklist[s])
+    layout:set_middle(middle_layout)
     layout:set_right(right_layout)
 
     mywibox[s]:set_widget(layout)
@@ -268,7 +251,6 @@ end
 
 -- {{{ Mouse bindings
 root.buttons(awful.util.table.join(
-    awful.button({ }, 4, awful.tag.viewnext),
     awful.button({ }, 5, awful.tag.viewprev)
 ))
 -- }}}
@@ -422,7 +404,8 @@ awful.rules.rules = {
                      border_color = beautiful.border_normal,
                      focus = awful.client.focus.filter,
                      keys = clientkeys,
-                     buttons = clientbuttons },
+                     buttons = clientbuttons,
+                     size_hints_honor = false },
       callback = awful.client.setslave
     },
     { rule = { class = "MPlayer" },
@@ -435,7 +418,7 @@ awful.rules.rules = {
       properties = { floating = true } },
     -- Set Firefox to always map on tags number 2 of screen 1.
     { rule = { class = "Chromium" },
-      properties = { tag = tags[1][2] } },
+      properties = { floating = false, tag = tags[1][2] } },
     { rule = { class = "vim" },
       properties = { tag = tags[1][1] } },
     { rule = { class = "Transmission" },
@@ -446,6 +429,8 @@ awful.rules.rules = {
       properties = { tag = tags[1][4] } },
     { rule = { class = "Skype" },
       properties = { tag = tags[1][3] } },
+    { rule = { instance = "exe" },
+      properties = { floating = true } },
 }
 -- }}}
 
