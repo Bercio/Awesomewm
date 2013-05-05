@@ -96,7 +96,7 @@ end
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
 
--- {{{ Wibox
+-- {G?G?G?{{ Wibox
 -- Personalized
 -- --- Battery notifier
 
@@ -109,17 +109,18 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 -- battimer:start()
 --Create a battery monitor
 mybatterymonitor = wibox.widget.textbox()
-vicious.register(mybatterymonitor, vicious.widgets.bat,
-    function (widget, args)
-        if args[1] == "⌁" then
-            return string.format('<span color="#6a9fb5"> ⚡ </span>')
-        elseif args[2] <= 10 then
-            return string.format('<span color="#6a9fb5"> ⚡ </span><span color="#AC4142">%s%i</span> ', args[1], args[2])
-        else return string.format('<span color="#6a9fb5"> ⚡ </span><span color="#90A959">%s%i</span> ', args[1], args[2])
-        end
-    end, 31, "BAT0")
+-- vicious.register(mybatterymonitor, vicious.widgets.bat,
+--     function (widget, args)
+--         if args[1] == "⌁" then
+--             return string.format('<span color="#6a9fb5"> ⚡ </span>')
+--         elseif args[2] <= 10 then
+--             return string.format('<span color="#6a9fb5"> ⚡ </span><span color="#AC4142">%s%i</span> ', args[1], args[2])
+--         else return string.format('<span color="#6a9fb5"> ⚡ </span><span color="#90A959">%s%i</span> ', args[1], args[2])
+--         end
+--     end, 31, "BAT0")
 --Create a wifi monitor
 mywifimonitor = wibox.widget.textbox()
+bashets.register("battiboy.sh",{widget = mybatterymonitor,format = "<span color='#6a9fb5'>$1 </span>$2 ", update_time = 5})
 vicious.register(mywifimonitor, vicious.widgets.wifi,
     function (widget, args)
         if args["{rate}"] == 0 then return "<span color='#AC4142'>W</span>"
@@ -261,17 +262,19 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "Right",  awful.tag.viewnext       ),
     awful.key({ modkey,           }, "Escape", awful.tag.history.restore),
     --Personalized
+    awful.key({ modkey },            "r",     function ()
+    awful.util.spawn("dmenu_run -fn xft:Inconsolata:size=10 -i -p 'Run command:' -nb '" ..
+ 		beautiful.bg_normal .. "' -nf '" .. beautiful.fg_normal ..
+		"' -sb '" .. beautiful.bg_focus ..
+		"' -sf '" .. beautiful.fg_focus .. "'")
+	end),
     awful.key({ modkey,		  }, "b",
 	function ()
 	    mywibox[mouse.screen].visible = not mywibox[mouse.screen].visible
 	end),
 
-    awful.key({ modkey,           }, "#79", function () awful.util.spawn("st -t Transmission -c Transmission -e transmission-remote -l") end),
-    awful.key({ modkey,           }, "#80", function () awful.util.spawn("st -t mutt -c mutt -e mutt") end),
-    awful.key({ modkey,           }, "#81", function () awful.util.spawn("st -t vim -c vim -e vim") end),
-    awful.key({ modkey,           }, "#83", function () awful.util.spawn("chromium") end),
-    awful.key({ modkey,           }, "#84", function () awful.util.spawn("mpc toggle") end),
-    awful.key({ modkey,           }, "#85", function () awful.util.spawn("st -t wicd -c wicd -e wicd-curses") end),
+    awful.key({ modkey,           }, "w", function () awful.util.spawn("chromium") end),
+    awful.key({ modkey,           }, "m", function () awful.util.spawn("mpd_control --artist") end),
 
 
     --End Personalized
@@ -317,7 +320,6 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey, "Control" }, "n", awful.client.restore),
 
     -- Prompt
-    awful.key({ modkey },            "r",     function () mypromptbox[mouse.screen]:run() end),
 
     awful.key({ modkey }, "x",
               function ()
