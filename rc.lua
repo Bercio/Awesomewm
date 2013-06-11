@@ -43,7 +43,7 @@ end
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, and wallpapers
-beautiful.init("/usr/share/awesome/themes/sky/theme.lua")
+beautiful.init("/home/bercio/.config/awesome/sky/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
 terminal = "urxvtc"
@@ -96,38 +96,10 @@ end
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
 
--- {{{ Wibox
 -- Personalized
--- --- Battery notifier
-
--- batterywidget = wibox.widget.textbox(
-
--- bat_clo = battery.batclosure("BAT0")
--- batterywidget.text = " " .. bat_clo() .. " "
--- battimer = timer({ timeout = 131 })
--- battimer:connect_signal("timeout", function() batterywidget.text = " " .. bat_clo() .. " " end)
--- battimer:start()
---Create a battery monitor
+-- Battery notifier
 mybatterymonitor = wibox.widget.textbox()
-vicious.register(mybatterymonitor, vicious.widgets.bat,
-    function (widget, args)
-        if args[1] == "⌁" then
-            return string.format('<span color="#6a9fb5"> ⚡ </span>')
-        elseif args[2] <= 10 then
-            return string.format('<span color="#6a9fb5"> ⚡ </span><span color="#AC4142">%s%i</span> ', args[1], args[2])
-        else return string.format('<span color="#6a9fb5"> ⚡ </span><span color="#90A959">%s%i</span> ', args[1], args[2])
-        end
-    end, 31, "BAT0")
---Create a wifi monitor
-mywifimonitor = wibox.widget.textbox()
-vicious.register(mywifimonitor, vicious.widgets.wifi,
-    function (widget, args)
-        if args["{rate}"] == 0 then return "<span color='#AC4142'>W</span>"
-        elseif args["{rate}"] < 20 then
-             return string.format(' <span color="#D28445">%i Mb/s</span> ', args["{rate}"])
-        else return string.format(' <span color="#90A959">%i Mb/s</span> ', args["{rate}"])
-        end
-    end, 7, "wlp3s0")
+bashets.register("battiboy.sh",{widget = mybatterymonitor,format = "<span color='#6a9fb5'>$1 </span>$2 ", update_time = 5})
 -- Create a volume monitor
 myvolumemonitor = wibox.widget.textbox()
 vicious.register(myvolumemonitor, vicious.widgets.volume,
@@ -138,7 +110,7 @@ vicious.register(myvolumemonitor, vicious.widgets.volume,
         end
     end, 1, "Master")
 myreminder = wibox.widget.textbox()
-bashets.register("remind.sh",{widget = myreminder, separator = "\n", format = "$1 <span color='#F5F5F5'>|</span> <span color='#F4BF75'>$2</span>", update_time = 367})
+bashets.register("remind.sh",{widget = myreminder, separator = "\n", format = "$1 <span color='#F5F5F5'>|</span> <span color='#F4BF75'>$2</span>", update_time = 67})
 mylastwidgetmonitor = wibox.widget.textbox("<span color='#F5F5F5'>|</span>")
 -- Create a textclock widget
 mytextclock = wibox.widget.textbox()
@@ -228,8 +200,6 @@ for s = 1, screen.count() do
     right_layout:add(mylastwidgetmonitor)
     right_layout:add(myvolumemonitor)
     right_layout:add(mylastwidgetmonitor)
-    right_layout:add(mywifimonitor)
-    right_layout:add(mylastwidgetmonitor)
     right_layout:add(mybatterymonitor)
     right_layout:add(mylayoutbox[s])
 
@@ -261,17 +231,22 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "Right",  awful.tag.viewnext       ),
     awful.key({ modkey,           }, "Escape", awful.tag.history.restore),
     --Personalized
+    awful.key({ modkey },            "r",     function ()
+    awful.util.spawn("dmenu_run -fn xft:Inconsolata:size=10 -i -p 'Run command:' -nb '" ..
+ 		beautiful.bg_normal .. "' -nf '" .. beautiful.fg_normal ..
+		"' -sb '" .. beautiful.bg_focus ..
+		"' -sf '" .. beautiful.fg_focus .. "'")
+	end),
     awful.key({ modkey,		  }, "b",
 	function ()
 	    mywibox[mouse.screen].visible = not mywibox[mouse.screen].visible
 	end),
 
-    awful.key({ modkey,           }, "#79", function () awful.util.spawn("st -t Transmission -c Transmission -e transmission-remote -l") end),
-    awful.key({ modkey,           }, "#80", function () awful.util.spawn("st -t mutt -c mutt -e mutt") end),
-    awful.key({ modkey,           }, "#81", function () awful.util.spawn("st -t vim -c vim -e vim") end),
-    awful.key({ modkey,           }, "#83", function () awful.util.spawn("chromium") end),
-    awful.key({ modkey,           }, "#84", function () awful.util.spawn("mpc toggle") end),
-    awful.key({ modkey,           }, "#85", function () awful.util.spawn("st -t wicd -c wicd -e wicd-curses") end),
+    awful.key({ modkey,           }, "w", function () awful.util.spawn("chromium") end),
+    awful.key({ modkey,           }, "c", function () awful.util.spawn("calibre") end),
+    awful.key({ modkey,           }, "g", function () awful.util.spawn("gmpc") end),
+    awful.key({ modkey,           }, "p", function () awful.util.spawn("pidgin") end),
+    awful.key({ modkey,           }, "m", function () awful.util.spawn("mpd_control --artist") end),
 
 
     --End Personalized
@@ -315,9 +290,14 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey, "Shift"   }, "space", function () awful.layout.inc(layouts, -1) end),
 
     awful.key({ modkey, "Control" }, "n", awful.client.restore),
+    awful.key({ modkey }, "Next",  function () awful.client.moveresize( 20,  20, -40, -40) end),
+    awful.key({ modkey }, "Prior", function () awful.client.moveresize(-20, -20,  40,  40) end),
+    awful.key({ modkey, "Control" }, "Down",  function () awful.client.moveresize(  0,  20,   0,   0) end),
+    awful.key({ modkey , "Control"}, "Up",    function () awful.client.moveresize(  0, -20,   0,   0) end),
+    awful.key({ modkey , "Control"}, "Left",  function () awful.client.moveresize(-20,   0,   0,   0) end),
+    awful.key({ modkey , "Control"}, "Right", function () awful.client.moveresize( 20,   0,   0,   0) end),
 
     -- Prompt
-    awful.key({ modkey },            "r",     function () mypromptbox[mouse.screen]:run() end),
 
     awful.key({ modkey }, "x",
               function ()
@@ -421,13 +401,11 @@ awful.rules.rules = {
       properties = { floating = false, tag = tags[1][2] } },
     { rule = { class = "vim" },
       properties = { tag = tags[1][1] } },
-    { rule = { class = "Transmission" },
-      properties = { tag = tags[1][4] } },
     { rule = { class = "mutt" },
       properties = { tag = tags[1][3] } },
     { rule = { class = "wicd" },
       properties = { tag = tags[1][4] } },
-    { rule = { class = "Skype" },
+    { rule = { class = "Pidgin" },
       properties = { tag = tags[1][3] } },
     { rule = { instance = "exe" },
       properties = { floating = true } },
